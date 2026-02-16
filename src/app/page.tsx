@@ -1,65 +1,149 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+
+type Category = { id: string; name: string };
+type LinkItem = {
+  id: string;
+  title: string;
+  url: string;
+  description?: string | null;
+  clicks: number;
+  category?: Category | null;
+};
+
+export default function LinksPage() {
+  const [query, setQuery] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [links, setLinks] = useState<LinkItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  async function load() {
+    const qs = new URLSearchParams();
+    if (query) qs.set("query", query);
+    if (categoryId) qs.set("categoryId", categoryId);
+
+    const [linksRes, catRes] = await Promise.all([
+      fetch(`/api/links?${qs.toString()}`).then((r) => r.json()),
+      fetch(`/api/categories`).then((r) => r.json()),
+    ]);
+
+    setLinks(linksRes);
+    setCategories(catRes);
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, categoryId]);
+
+  const shareBase = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return `${window.location.origin}/l/`;
+  }, []);
+
+  async function onDelete(id: string) {
+    await fetch(`/api/links/${id}`, { method: "DELETE" });
+    await load();
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div style={{ padding: 24, maxWidth: 1100, margin: "0 auto" }}>
+      <div style={headerRowStyle}>
+        <h1 style={{ margin: 0 }}>Linktree</h1>
+
+        <Link href="/links/new" style={addBtnStyle}>
+          + เพิ่มลิ้ง
+        </Link>
+      </div>
+
+      <div style={{ display: "flex", gap: 12, margin: "12px 0" }}>
+        <input
+          placeholder="ค้นหา: ชื่อ / URL / คำอธิบาย"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{ flex: 1, padding: 8 }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <select
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
+          style={{ padding: 8 }}
+        >
+          <option value="">ทุกหมวดหมู่</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <table width="100%" cellPadding={10} style={{ borderCollapse: "collapse" }}>
+        <thead>
+          <tr style={{ textAlign: "left", borderBottom: "1px solid #ddd" }}>
+            <th>ชื่อ</th>
+            <th>หมวด</th>
+            <th>คลิก</th>
+            <th>ลิงก์</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {links.map((l) => (
+            <tr key={l.id} style={{ borderBottom: "1px solid #eee" }}>
+              <td>
+                <div>
+                  <b>{l.title}</b>
+                </div>
+                <div style={{ color: "#555" }}>{l.description}</div>
+              </td>
+              <td>{l.category?.name ?? "-"}</td>
+              <td>{l.clicks}</td>
+              <td style={{ maxWidth: 340 }}>
+                <div style={{ fontSize: 12, color: "#666" }}>ปลายทาง: {l.url}</div>
+                <div style={{ fontSize: 12 }}>
+                  แชร์: {shareBase}
+                  {l.id}
+                </div>
+              </td>
+              <td>
+                <button onClick={() => navigator.clipboard.writeText(`${shareBase}${l.id}`)}>
+                  Copy
+                </button>{" "}
+                {/* ปุ่ม Edit ให้ทำเป็น modal/form แล้วเรียก PUT */}
+                <button onClick={() => onDelete(l.id)} style={{ color: "crimson" }}>
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+
+          {links.length === 0 && (
+            <tr>
+              <td colSpan={5} style={{ padding: 20, color: "#666" }}>
+                ไม่พบลิงก์
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
+
+const headerRowStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
+
+const addBtnStyle: React.CSSProperties = {
+  display: "inline-block",
+  padding: "10px 12px",
+  borderRadius: 10,
+  background: "#111",
+  color: "#fff",
+  textDecoration: "none",
+  fontWeight: 600,
+};

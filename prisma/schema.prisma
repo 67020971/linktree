@@ -1,0 +1,31 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  links Link[]
+}
+
+model Link {
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  description String?
+  clicks      Int      @default(0)
+
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([title])
+  @@index([url])
+}
