@@ -10,9 +10,20 @@ type LinkType = {
   description?: string;
 };
 
+type ToastType = {
+  message: string;
+  type: "success" | "error";
+};
+
 export default function LinksPage() {
   const [links, setLinks] = useState<LinkType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<ToastType | null>(null);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2000);
+  };
 
   const fetchLinks = async () => {
     try {
@@ -20,26 +31,33 @@ export default function LinksPage() {
       const data = await res.json();
       setLinks(data);
     } catch (error) {
-      console.error("Fetch error:", error);
+      showToast("โหลดข้อมูลไม่สำเร็จ", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteLink = async (id: string) => {
-    const confirmDelete = confirm("ลบลิงก์นี้ใช่ไหม?");
-    if (!confirmDelete) return;
+  const copyLink = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast("คัดลอกลิงก์แล้ว ✅", "success");
+    } catch {
+      showToast("คัดลอกไม่สำเร็จ", "error");
+    }
+  };
 
+  const deleteLink = async (id: string) => {
     try {
       const res = await fetch(`/api/links/${id}`, {
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Delete failed");
+      if (!res.ok) throw new Error();
 
       setLinks((prev) => prev.filter((link) => link.id !== id));
-    } catch (error) {
-      console.error("Delete error:", error);
+      showToast("ลบลิงก์สำเร็จ 🗑", "success");
+    } catch {
+      showToast("ลบไม่สำเร็จ", "error");
     }
   };
 
@@ -56,11 +74,22 @@ export default function LinksPage() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-black p-6 text-white">
-      {/* Glow Background Effect */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.25),transparent_50%)]" />
+      
+      {/* Toast */}
+      {toast && (
+        <div
+          className={`fixed top-6 right-6 px-6 py-3 rounded-xl shadow-lg text-sm font-medium transition-all duration-300 animate-slideIn
+          ${
+            toast.type === "success"
+              ? "bg-emerald-500 text-white"
+              : "bg-red-500 text-white"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
 
       <div className="max-w-4xl mx-auto">
-        {/* Header + Back Button */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold tracking-tight">
             📌 All Links
@@ -104,16 +133,42 @@ export default function LinksPage() {
                 </a>
               </div>
 
-              <button
-                onClick={() => deleteLink(link.id)}
-                className="bg-red-600/80 hover:bg-red-600 px-4 py-2 rounded-xl text-sm font-medium transition"
-              >
-                ลบ
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => copyLink(link.url)}
+                  className="bg-indigo-500/80 hover:bg-indigo-500 px-4 py-2 rounded-xl text-sm transition"
+                >
+                  Copy
+                </button>
+
+                <button
+                  onClick={() => deleteLink(link.id)}
+                  className="bg-red-600/80 hover:bg-red-600 px-4 py-2 rounded-xl text-sm transition"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Animation */}
+      <style jsx>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .animate-slideIn {
+          animation: slideIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

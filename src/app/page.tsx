@@ -20,10 +20,14 @@ export default function LinksPage() {
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
 
-  function showToast(message: string) {
-    setToast(message);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  function showToast(message: string, type: "success" | "error") {
+    setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
   }
 
@@ -42,7 +46,7 @@ export default function LinksPage() {
       setLinks(linksRes);
       setCategories(catRes);
     } catch {
-      showToast("โหลดข้อมูลไม่สำเร็จ");
+      showToast("โหลดข้อมูลไม่สำเร็จ", "error");
     } finally {
       setLoading(false);
     }
@@ -62,9 +66,15 @@ export default function LinksPage() {
     const ok = window.confirm("ยืนยันการลบลิงก์นี้?");
     if (!ok) return;
 
-    await fetch(`/api/links/${id}`, { method: "DELETE" });
-    showToast("ลบสำเร็จ");
-    await load();
+    try {
+      const res = await fetch(`/api/links/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+
+      showToast("ลบสำเร็จ 🗑", "success");
+      await load();
+    } catch {
+      showToast("ลบไม่สำเร็จ ❌", "error");
+    }
   }
 
   return (
@@ -77,12 +87,18 @@ export default function LinksPage() {
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-6 right-6 bg-black text-white px-4 py-2 rounded-xl shadow-lg"
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.3 }}
+            className={`fixed top-6 right-6 px-5 py-3 rounded-xl shadow-xl text-sm font-medium border backdrop-blur-lg
+              ${
+                toast.type === "error"
+                  ? "bg-red-600/90 border-red-400 text-white"
+                  : "bg-emerald-600/90 border-emerald-400 text-white"
+              }`}
           >
-            {toast}
+            {toast.message}
           </motion.div>
         )}
       </AnimatePresence>
@@ -127,10 +143,7 @@ export default function LinksPage() {
         </div>
 
         {/* Cards */}
-        <motion.div
-          layout
-          className="grid gap-4"
-        >
+        <motion.div layout className="grid gap-4">
           <AnimatePresence>
             {links.map((l) => (
               <motion.div
@@ -168,8 +181,12 @@ export default function LinksPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText(`${shareBase}${l.id}`);
-                        showToast("คัดลอกแล้ว");
+                        try {
+                          navigator.clipboard.writeText(`${shareBase}${l.id}`);
+                          showToast("คัดลอกแล้ว ✅", "success");
+                        } catch {
+                          showToast("คัดลอกไม่สำเร็จ ❌", "error");
+                        }
                       }}
                       className="px-3 py-2 text-sm rounded-lg bg-black text-white"
                     >
@@ -190,6 +207,11 @@ export default function LinksPage() {
           </AnimatePresence>
         </motion.div>
 
+        {loading && (
+          <div className="text-center text-sm text-white/60 mt-6">
+            กำลังโหลด...
+          </div>
+        )}
       </div>
     </motion.div>
   );
