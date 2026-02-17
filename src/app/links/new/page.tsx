@@ -47,7 +47,7 @@ export default function NewLinkPage() {
   }
 
   return (
-  <div className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 flex items-center justify-center p-6">
+  <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-black flex items-center justify-center p-6">
     
     <div className="w-full max-w-xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl rounded-2xl p-8 text-white">
 

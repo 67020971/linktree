@@ -6,13 +6,15 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log("Deleting ID:", params.id);
+
     await prisma.link.delete({
       where: { id: params.id },
     });
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("DELETE ERROR:", error);
+    console.error("DELETE ERROR FULL:", error);
     return NextResponse.json(
       { message: error.message },
       { status: 500 }
