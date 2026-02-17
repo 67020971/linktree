@@ -1,19 +1,21 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
-export async function PUT(_: Request, { params }: { params: { id: string } }) {
-  const body = await _.json();
-  const { title, url, description, categoryId } = body;
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await prisma.link.delete({
+      where: { id: params.id },
+    });
 
-  const updated = await prisma.link.update({
-    where: { id: params.id },
-    data: { title, url, description, categoryId: categoryId || null },
-  });
-
-  return NextResponse.json(updated);
-}
-
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  await prisma.link.delete({ where: { id: params.id } });
-  return NextResponse.json({ ok: true });
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("DELETE ERROR:", error);
+    return NextResponse.json(
+      { message: error.message },
+      { status: 500 }
+    );
+  }
 }
