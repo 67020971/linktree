@@ -23,7 +23,7 @@ https://www.figma.com/design/1Uf5OpXFLA9rXZ5LIHFo8P/link?node-id=0-1&t=fYXQLGTEF
 ---
 
 ## 🛠️ เทคโนโลยีที่ใช้
-- HTML  
+- next.js  
 - CSS  
 - JavaScript  
 - Figma (สำหรับออกแบบ UI)
@@ -32,8 +32,8 @@ https://www.figma.com/design/1Uf5OpXFLA9rXZ5LIHFo8P/link?node-id=0-1&t=fYXQLGTEF
 
 ## 🚀 วิธีการใช้งาน
 1. Clone repository นี้
-2. เปิดไฟล์ `index.html` ด้วย Web Browser
-3. ใช้งานเว็บไซต์ Linktree ได้ทันที
+2. git install แล้ว npm run dev ได้เลย
+-. ใช้งานเว็บไซต์ Linktree ได้ทันที
 
 ---
 
