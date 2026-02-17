@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Category = { id: string; name: string };
+
 type LinkItem = {
   id: string;
   title: string;
@@ -26,6 +27,9 @@ export default function LinksPage() {
     type: "success" | "error";
   } | null>(null);
 
+  // ✅ state สำหรับ popup ลบ
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
   function showToast(message: string, type: "success" | "error") {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
@@ -34,6 +38,7 @@ export default function LinksPage() {
   async function load() {
     try {
       setLoading(true);
+
       const qs = new URLSearchParams();
       if (query) qs.set("query", query);
       if (categoryId) qs.set("categoryId", categoryId);
@@ -62,15 +67,14 @@ export default function LinksPage() {
     return `${window.location.origin}/l/`;
   }, []);
 
+  // ✅ ฟังก์ชันลบ (ไม่มี confirm แล้ว)
   async function onDelete(id: string) {
-    const ok = window.confirm("ยืนยันการลบลิงก์นี้?");
-    if (!ok) return;
-
     try {
       const res = await fetch(`/api/links/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
 
       showToast("ลบสำเร็จ 🗑", "success");
+      setDeleteId(null);
       await load();
     } catch {
       showToast("ลบไม่สำเร็จ ❌", "error");
@@ -92,11 +96,11 @@ export default function LinksPage() {
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.3 }}
             className={`fixed top-6 right-6 px-5 py-3 rounded-xl shadow-xl text-sm font-medium border backdrop-blur-lg
-              ${
-                toast.type === "error"
-                  ? "bg-red-600/90 border-red-400 text-white"
-                  : "bg-emerald-600/90 border-emerald-400 text-white"
-              }`}
+            ${
+              toast.type === "error"
+                ? "bg-red-600/90 border-red-400 text-white"
+                : "bg-emerald-600/90 border-emerald-400 text-white"
+            }`}
           >
             {toast.message}
           </motion.div>
@@ -104,7 +108,6 @@ export default function LinksPage() {
       </AnimatePresence>
 
       <div className="w-full max-w-6xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl rounded-2xl p-6 text-white">
-
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold tracking-tight">
@@ -157,11 +160,8 @@ export default function LinksPage() {
                 className="bg-white/15 backdrop-blur-md p-5 rounded-2xl border border-white/20 hover:shadow-lg transition"
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
                   <div>
-                    <h2 className="text-lg font-semibold">
-                      {l.title}
-                    </h2>
+                    <h2 className="text-lg font-semibold">{l.title}</h2>
 
                     {l.description && (
                       <p className="text-sm text-white/70 mt-1">
@@ -174,7 +174,8 @@ export default function LinksPage() {
                     </div>
 
                     <div className="text-xs text-white/70 mt-1">
-                      แชร์: {shareBase}{l.id}
+                      แชร์: {shareBase}
+                      {l.id}
                     </div>
                   </div>
 
@@ -182,7 +183,9 @@ export default function LinksPage() {
                     <button
                       onClick={() => {
                         try {
-                          navigator.clipboard.writeText(`${shareBase}${l.id}`);
+                          navigator.clipboard.writeText(
+                            `${shareBase}${l.id}`
+                          );
                           showToast("คัดลอกแล้ว ✅", "success");
                         } catch {
                           showToast("คัดลอกไม่สำเร็จ ❌", "error");
@@ -194,13 +197,12 @@ export default function LinksPage() {
                     </button>
 
                     <button
-                      onClick={() => onDelete(l.id)}
+                      onClick={() => setDeleteId(l.id)}
                       className="px-3 py-2 text-sm rounded-lg bg-red-500 text-white"
                     >
                       Delete
                     </button>
                   </div>
-
                 </div>
               </motion.div>
             ))}
@@ -213,6 +215,50 @@ export default function LinksPage() {
           </div>
         )}
       </div>
+
+      {/* ✅ Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white text-black p-6 rounded-2xl shadow-xl w-[350px]"
+            >
+              <h2 className="text-lg font-semibold mb-3">
+                ยืนยันการลบ
+              </h2>
+
+              <p className="text-sm text-gray-600 mb-6">
+                คุณแน่ใจหรือไม่ว่าต้องการลบลิงก์นี้?
+              </p>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setDeleteId(null)}
+                  className="px-4 py-2 rounded-lg bg-gray-200"
+                >
+                  ยกเลิก
+                </button>
+
+                <button
+                  onClick={() => deleteId && onDelete(deleteId)}
+                  className="px-4 py-2 rounded-lg bg-red-500 text-white"
+                >
+                  ลบ
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

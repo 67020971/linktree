@@ -2,21 +2,31 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log("Deleting ID:", params.id);
+    // ✅ ต้อง await params ก่อน
+    const { id } = await context.params;
+
+    console.log("Deleting ID:", id);
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Missing ID" },
+        { status: 400 }
+      );
+    }
 
     await prisma.link.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("DELETE ERROR FULL:", error);
+    console.error("DELETE ERROR:", error);
     return NextResponse.json(
-      { message: error.message },
+      { error: error.message },
       { status: 500 }
     );
   }
