@@ -23,7 +23,7 @@ https://www.figma.com/design/1Uf5OpXFLA9rXZ5LIHFo8P/link?node-id=0-1&t=fYXQLGTEF
 ---
 
 ## 🛠️ เทคโนโลยีที่ใช้
-- HTML  
+- next.js  
 - CSS  
 - JavaScript  
 - Figma (สำหรับออกแบบ UI)
