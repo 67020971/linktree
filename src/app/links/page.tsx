@@ -26,15 +26,25 @@ export default function LinksPage() {
   };
 
   const deleteLink = async (id: string) => {
-    const confirmDelete = confirm("ลบลิงก์นี้ใช่ไหม?");
-    if (!confirmDelete) return;
+  const confirmDelete = confirm("ลบลิงก์นี้ใช่ไหม?");
+  if (!confirmDelete) return;
 
-    await fetch(`/api/links/${id}`, {
+  try {
+    const res = await fetch(`/api/links/${id}`, {
       method: "DELETE",
     });
 
-    fetchLinks();
-  };
+    if (!res.ok) {
+      throw new Error("Delete failed");
+    }
+
+    // ✅ ลบออกจาก state ทันที
+    setLinks((prev) => prev.filter((link) => link.id !== id));
+  } catch (error) {
+    console.error("Delete error:", error);
+    alert("ลบไม่สำเร็จ");
+  }
+};
 
   useEffect(() => {
     fetchLinks();

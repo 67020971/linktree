@@ -145,7 +145,8 @@ export default function LinksPage() {
                       navigator.clipboard.writeText(`${shareBase}${l.id}`);
                       alert("คัดลอกแล้ว!");
                     }}
-                    className="px-3 py-2 text-sm rounded-lg border hover:bg-gray-100 transition"
+                    className="px-3 py-2 text-sm rounded-lg bg-gray-900 text-white hover:bg-black transition"
+
                   >
                     Copy
                   </button>

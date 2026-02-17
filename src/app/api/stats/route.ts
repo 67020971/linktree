@@ -12,7 +12,7 @@ export async function GET() {
       select: { id: true, title: true, clicks: true },
     }),
   ]);
-
+  
   return NextResponse.json({
     linksCount,
     categoriesCount,
