@@ -67,7 +67,7 @@ export default function LinksPage() {
     return `${window.location.origin}/l/`;
   }, []);
 
-  // ✅ ฟังก์ชันลบ (ไม่มี confirm แล้ว)
+  
   async function onDelete(id: string) {
     try {
       const res = await fetch(`/api/links/${id}`, { method: "DELETE" });
@@ -110,17 +110,28 @@ export default function LinksPage() {
       <div className="w-full max-w-6xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl rounded-2xl p-6 text-white">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">
-            Linktree Dashboard
-          </h1>
+  <h1 className="text-3xl font-bold tracking-tight">
+    Linktree Dashboard
+  </h1>
 
-          <Link
-            href="/links/new"
-            className="px-4 py-2 rounded-xl bg-black text-white font-semibold hover:opacity-80 transition"
-          >
-            + เพิ่มลิงก์
-          </Link>
-        </div>
+  <div className="flex gap-3">
+    {/* ปุ่มไปหน้า /link */}
+    <Link
+      href="links"
+      className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:opacity-80 transition"
+    >
+      all links
+    </Link>
+
+    {/* ปุ่มเพิ่มลิงก์ */}
+    <Link
+      href="/links/new"
+      className="px-4 py-2 rounded-xl bg-black text-white font-semibold hover:opacity-80 transition"
+    >
+      + เพิ่มลิงก์
+    </Link>
+  </div>
+</div>
 
         {/* Search */}
         <div className="flex flex-col md:flex-row gap-3 mb-6">
