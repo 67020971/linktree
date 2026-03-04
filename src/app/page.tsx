@@ -115,7 +115,6 @@ export default function LinksPage() {
   </h1>
 
   <div className="flex gap-3">
-    {/* ปุ่มไปหน้า /link */}
     <Link
       href="links"
       className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:opacity-80 transition"
@@ -123,7 +122,6 @@ export default function LinksPage() {
       all links
     </Link>
 
-    {/* ปุ่มเพิ่มลิงก์ */}
     <Link
       href="/links/new"
       className="px-4 py-2 rounded-xl bg-black text-white font-semibold hover:opacity-80 transition"
@@ -156,7 +154,7 @@ export default function LinksPage() {
           </select>
         </div>
 
-        {/* Cards */}
+        
         <motion.div layout className="grid gap-4">
           <AnimatePresence>
             {links.map((l) => (
@@ -227,7 +225,6 @@ export default function LinksPage() {
         )}
       </div>
 
-      {/* ✅ Delete Confirmation Modal */}
       <AnimatePresence>
         {deleteId && (
           <motion.div
