@@ -55,6 +55,13 @@ export default function NewLinkPage() {
         เพิ่มลิงก์ใหม่
       </h1>
 
+      <button
+        onClick={() => router.push("/")}
+        className="mb-6 text-sm text-white/70 hover:text-white transition"
+      >
+        ← กลับหน้าหลัก
+      </button>
+
       <form onSubmit={onSubmit} className="space-y-4">
 
         <input
