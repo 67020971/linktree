@@ -71,6 +71,35 @@ app.get("/:username", async (req, res) => {
     }
 
 });
+//test connect
+app.get("/api/test-db", async (req, res) => {
+
+try{
+
+const connectDB = require("./config/db");
+
+const db = await connectDB();
+
+await db.command({ ping: 1 });
+
+res.json({
+success:true,
+message:"MongoDB connected"
+});
+
+}catch(err){
+
+console.log("DB TEST ERROR:",err)
+
+res.json({
+success:false,
+message:"MongoDB connection failed",
+error:err.message
+});
+
+}
+
+});
 
 
 app.listen(PORT, () =>{
