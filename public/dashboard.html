@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-black text-white">
+
+<!-- Navbar -->
+<nav class="fixed top-0 left-0 w-full flex justify-between items-center px-10 py-5 bg-black/30 backdrop-blur-md border-b border-white/10 z-50">
+
+<div class="text-xl font-bold">
+<a href="/">MyLink</a>
+</div>
+
+<div id="nav-links" class="space-x-6 text-gray-200"></div>
+
+</nav>
+
+<!-- Dashboard Content -->
+<div class="flex items-center justify-center pt-32 p-6">
+
+<div class="bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+
+<h2 class="text-3xl font-bold text-center mb-6">
+Add Link
+</h2>
+
+<input id="title"
+placeholder="Link Title"
+class="w-full p-3 rounded-lg bg-black/40 border border-gray-700 focus:outline-none focus:border-blue-500 mb-4"
+/>
+
+<input id="url"
+placeholder="https://"
+class="w-full p-3 rounded-lg bg-black/40 border border-gray-700 focus:outline-none focus:border-blue-500 mb-6"
+/>
+
+<div class="space-y-3">
+
+<button onclick="addLink()"
+class="w-full bg-blue-600 hover:bg-blue-700 font-semibold p-3 rounded-lg transition">
+Add Link
+</button>
+
+<button onclick="goProfile()"
+class="w-full bg-green-600 hover:bg-green-700 font-semibold p-3 rounded-lg transition">
+View Profile
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* Navbar logic */
+
+const user = localStorage.getItem("user")
+const nav = document.getElementById("nav-links")
+
+if(user){
+
+nav.innerHTML = `
+<a href="/dashboard.html" class="hover:text-white transition">Dashboard</a>
+<a href="/profile.html?user=${user}" class="hover:text-white transition">Profile</a>
+<button onclick="logout()" class="text-red-400 hover:text-red-300">Logout</button>
+`
+
+}else{
+
+nav.innerHTML = `
+<a href="/login.html" class="hover:text-white">Login</a>
+<a href="/register.html" class="hover:text-white">Register</a>
+`
+
+}
+
+/* logout */
+
+function logout(){
+localStorage.removeItem("user")
+window.location.href="/login.html"
+}
+
+/* dashboard logic */
+
+const username = localStorage.getItem("user")
+
+if(!username){
+window.location.href="/login.html"
+}
+
+async function addLink(){
+
+const title = document.getElementById("title").value
+const url = document.getElementById("url").value
+
+const res = await fetch("/api/add-link",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username,
+title,
+url
+})
+})
+
+const data = await res.json()
+
+alert(data.message || "Link added")
+
+document.getElementById("title").value=""
+document.getElementById("url").value=""
+
+}
+
+function goProfile(){
+window.location.href="/profile.html?user=" + username
+}
+
+</script>
+
+</body>
+</html>
