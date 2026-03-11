@@ -1,5 +1,4 @@
 const { MongoClient } = require("mongodb");
-require("dotenv").config();
 
 const uri = process.env.MONGO_URI;
 
@@ -8,20 +7,14 @@ let db;
 
 async function connectDB(){
 
-if(!db){
+  if(!db){
+    client = new MongoClient(uri);
+    await client.connect();
+    db = client.db("linktree");
+    console.log("MongoDB connected");
+  }
 
-client = new MongoClient(uri);
-
-await client.connect();
-
-db = client.db("users");
-
-console.log("MongoDB connected");
-
-}
-
-return db;
-
+  return db;
 }
 
 module.exports = connectDB;
