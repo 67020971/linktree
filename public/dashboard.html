@@ -103,7 +103,7 @@ async function addLink(){
 const title = document.getElementById("title").value
 const url = document.getElementById("url").value
 
-const res = await fetch("/api/add-link",{
+const res = await fetch("https://linktree-o4ch.onrender.com/api/add-link",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
