@@ -213,7 +213,7 @@ location.href="/login.html"
 // LOAD USER
 async function loadUser(){
 
-const res = await fetch("/api/user/"+username)
+const res = await fetch("https://linktree-o4ch.onrender.com/api/user/"+username)
 const data = await res.json()
 
 if(data.avatar){
@@ -234,7 +234,7 @@ text.classList.add("hidden")
 // LOAD LINKS
 async function loadLinks(){
 
-const res = await fetch("/api/links/"+username)
+const res = await fetch("https://linktree-o4ch.onrender.com/api/links/"+username)
 const links = await res.json()
 
 const container=document.getElementById("links")
@@ -329,7 +329,7 @@ editModal.classList.add("hidden")
 
 async function saveEdit(){
 
-await fetch("/api/edit-link/"+editingId,{
+await fetch("https://linktree-o4ch.onrender.com/api/edit-link/"+editingId,{
 method:"PUT",
 headers:{ "Content-Type":"application/json"},
 body:JSON.stringify({
@@ -362,7 +362,7 @@ deleteModal.classList.add("hidden")
 
 async function confirmDelete(){
 
-await fetch("/api/delete-link/"+deleteId,{
+await fetch("https://linktree-o4ch.onrender.com/api/delete-link/"+deleteId,{
 method:"DELETE"
 })
 
@@ -387,7 +387,7 @@ const formData=new FormData()
 formData.append("avatar",file)
 formData.append("username",username)
 
-const res=await fetch("/api/upload-avatar",{
+const res=await fetch("https://linktree-o4ch.onrender.com/api/upload-avatar",{
 method:"POST",
 body:formData
 })
