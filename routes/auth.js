@@ -67,6 +67,8 @@ message:"Register successful"
 
 }catch(err){
 
+console.log("REGISTER ERROR:", err)
+
 res.json({
 success:false,
 message:"Register failed"
