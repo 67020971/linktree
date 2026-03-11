@@ -15,18 +15,16 @@ const saltRounds = process.env.SALT_ROUNDS;
 
 const app = express();
 
+app.use(cors({
+  origin: "https://linktree-rust-ten.vercel.app"
+}));
+
 app.use(bodyParsser.json());
 app.use(express.static("public"));
 app.use("/api", authRoutes);
 app.use("/uploads", express.static("uploads"))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-
-
-app.use(cors({
-  origin: "https://linktree-rust-ten.vercel.app"
-}));
-
 
 app.get("/", (req, res) => {
     res.send("Server is running");
