@@ -23,7 +23,7 @@ https://www.figma.com/design/1Uf5OpXFLA9rXZ5LIHFo8P/link?node-id=0-1&t=fYXQLGTEF
 ---
 
 ## 🛠️ เทคโนโลยีที่ใช้
-- next.js  
+- node.js  
 - CSS  
 - JavaScript  
 - Figma (สำหรับออกแบบ UI)
@@ -32,7 +32,7 @@ https://www.figma.com/design/1Uf5OpXFLA9rXZ5LIHFo8P/link?node-id=0-1&t=fYXQLGTEF
 
 ## 🚀 วิธีการใช้งาน
 1. Clone repository นี้
-2. git install แล้ว npm run dev ได้เลย
+2. git install แล้ว node server.js ได้เลย
 -. ใช้งานเว็บไซต์ Linktree ได้ทันที
 
 ---
@@ -68,7 +68,7 @@ https://www.figma.com/design/1Uf5OpXFLA9rXZ5LIHFo8P/link?node-id=0-1&t=fYXQLGTEF
 ---
 
 ## 🛠️ เทคโนโลยีที่ใช้
-- next.js  
+- node.js  
 - CSS  
 - JavaScript  
 - Figma (สำหรับออกแบบ UI)
