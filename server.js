@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth");
 const multer = require("multer")
+const PORT = process.env.PORT || 3000
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ const app = express();
 
 app.use(bodyParsser.json());
 app.use(express.static("public"));
-app.use("/api",authRoutes);
+app.use("/api", authRoutes);
 app.use("/uploads", express.static("uploads"))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
@@ -70,6 +71,6 @@ app.get("/:username", async (req, res) => {
 });
 
 
-app.listen(3000, () =>{
-    console.log('Server is running on port http://localhost:3000');
+app.listen(PORT, () =>{
+console.log("Server running on port " + PORT)
 })
