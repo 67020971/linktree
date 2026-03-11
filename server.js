@@ -18,6 +18,8 @@ const app = express();
 app.use(cors({
   origin: "https://linktree-rust-ten.vercel.app"
 }));
+app.options("*", cors());
+
 
 app.use(bodyParsser.json());
 app.use(express.static("public"));
