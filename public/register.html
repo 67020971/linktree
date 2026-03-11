@@ -111,10 +111,12 @@ body:JSON.stringify({username,password})
 
 const data = await res.json()
 
+console.log(data)
+
 document.getElementById("msg").innerText=data.message
 
 if(data.success){
-
+    
 setTimeout(()=>{
 window.location.href="/login.html"
 },1000)
