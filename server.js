@@ -22,7 +22,9 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 
-//register
+app.use(cors({
+  origin: "https://linktree-rust-ten.vercel.app"
+}));
 
 
 app.get("/", (req, res) => {
