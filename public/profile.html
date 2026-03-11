@@ -17,6 +17,21 @@ class="min-h-screen pt-20 bg-gradient-to-br from-gray-950 via-slate-900 to-black
 <!-- NAVBAR -->
 <nav class="fixed top-0 left-0 w-full flex justify-between items-center px-10 py-5 bg-black/30 backdrop-blur-md border-b border-white/10 z-50">
 
+    <button onclick="shareProfile()"
+class="fixed top-24 right-6 z-50
+bg-white/10 backdrop-blur
+border border-white/20
+text-white
+w-12 h-12
+rounded-full
+flex items-center justify-center
+text-xl
+hover:bg-white/20
+transition shadow-lg">
+
+📤
+
+</button>
 <div class="text-xl font-bold text-white">
 <a href="/" class="hover:text-blue-400 transition">
 MyLink
@@ -56,6 +71,8 @@ Upload Avatar
 class="text-sm text-blue-400 hover:underline mt-2">
 Copy Profile Link
 </button>
+
+
 
 </div>
 
@@ -416,6 +433,28 @@ function copyProfile(){
 navigator.clipboard.writeText(location.href)
 
 alert("Profile link copied!")
+
+}
+
+
+function shareProfile(){
+
+const url = window.location.href
+
+if(navigator.share){
+
+navigator.share({
+title: "My Link Page",
+text: "ดูโปรไฟล์ของฉัน",
+url: url
+})
+
+}else{
+
+navigator.clipboard.writeText(url)
+alert("คัดลอกลิงก์แล้ว: " + url)
+
+}
 
 }
 
