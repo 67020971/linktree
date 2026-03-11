@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth");
 const multer = require("multer")
 const PORT = process.env.PORT || 3000
+const cors = require("cors");
 
 dotenv.config();
 
