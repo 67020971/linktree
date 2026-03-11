@@ -12,7 +12,7 @@
 
 <body class="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-black text-white">
 
-    <div id="popup"
+<div id="popup"
 class="fixed inset-0 flex items-center justify-center bg-black/60 hidden z-50">
 
 <div class="bg-slate-900 border border-white/10 p-6 rounded-xl shadow-xl text-center w-80">
@@ -139,7 +139,7 @@ url
 
 const data = await res.json()
 
-alert(data.message || "Link added")
+showPopup()
 
 document.getElementById("title").value=""
 document.getElementById("url").value=""
